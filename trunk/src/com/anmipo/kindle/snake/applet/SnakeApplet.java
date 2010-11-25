@@ -5,6 +5,7 @@
 package com.anmipo.kindle.snake.applet;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 
 import com.anmipo.kindle.snake.GamePanel;
 
@@ -29,7 +30,12 @@ public class SnakeApplet extends java.applet.Applet {
 		snakePanel.init();
 		snakePanel.start();
 	}
-  
+	
+	public void update(Graphics gr) {
+		//this is required because the default update() 
+		//clears background and causes flickering
+		paint(gr);
+	}
 	public void stop() {
 		snakePanel.stop();
 	}
