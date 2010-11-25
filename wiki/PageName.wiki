@@ -1,0 +1,12 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+
+	<applet archive="http://snake-game-kindlet.googlecode.com/files/kSnake.jar" code="com.anmipo.kindle.snake.applet.SnakeApplet.class" width="403" height="403">
+	<span id="noApplet">The applet has not been loaded. Make sure your browser allows running Java applets.</span>
+	</applet>
