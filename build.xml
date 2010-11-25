@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<project name="KindleTest" default="deploy" basedir=".">
+	<!-- set global properties for this build -->
+	<property environment="env"/>
+	<property file="build.properties"/>
+	
+	<path id="classpath">
+		<!-- Kindlet libararies -->
+		<fileset dir="${kdk.lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<!-- Personal basis profile (JSR 217) libararies -->
+		<fileset dir="${pbp.lib.dir}">
+			<include name="**/*.jar"/>
+			<include name="**/*.zip"/>
+		</fileset>
+	</path>
+	<property name="build.classpath" refid="classpath"/>
+	
+	<target name="prepare">
+		<mkdir dir="${out.dir}"/>
+		<delete>
+			<fileset dir="${out.dir}"/>
+		</delete>
+		<mkdir dir="${deploy.dir}"/>
+		<delete>
+			<fileset dir="${deploy.dir}"/>
+		</delete>
+	</target>
+	
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.dir}" source="1.4" excludes="*.java" destdir="${out.dir}" debug="off" deprecation="on" optimize="on">
+			<classpath refid="classpath"/>
+		</javac>
+		<copy todir="${out.dir}/com/anmipo/kindle/snake/resources" overwrite="true">
+		    <fileset dir="${src.dir}/com/anmipo/kindle/snake/resources"/>
+		</copy>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<jar destfile="${out.file.name}.jar" basedir="${out.dir}" includes="**/*.*" manifest="manifest.mf"/>
+	</target>
+		
+	<target name="sign" depends="jar">
+		<signjar jar="${out.file.name}.jar" keystore="${keystore.file}" storepass="${keystore.pass}" alias="dktest"/>
+		<signjar jar="${out.file.name}.jar" keystore="${keystore.file}" storepass="${keystore.pass}" alias="ditest"/>
+		<signjar jar="${out.file.name}.jar" keystore="${keystore.file}" storepass="${keystore.pass}" alias="dntest"/>
+	</target>
+	
+	<target name="deploy" depends="sign">
+		<move file="${out.file.name}.jar" tofile="${deploy.dir}/${out.file.name}.azw2" overwrite="true"/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${out.dir}" failonerror="false"/>
+		<delete dir="${deploy.dir}" failonerror="false"/>
+	</target>
+
+</project>

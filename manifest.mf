@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Description: Snake game for Kindle
+Main-Class: com.anmipo.kindle.snake.SnakeKindlet
+Implementation-Title: Snake Game
+Implementation-Version: 1.0
+Implementation-Vendor: AnMiPo
