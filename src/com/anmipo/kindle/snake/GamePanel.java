@@ -66,13 +66,13 @@ public class GamePanel extends Component implements KeyListener {
 	}
 
 	//(re)initializes the buffer image for double-buffered painting
-	private void reinitPaintBuffer() {
+	private synchronized void reinitPaintBuffer() {
 		disposePaintBuffer();
 		bufferImage = createImage(getWidth(), getHeight());
 		bufferGraphics = bufferImage.getGraphics();
 	}
 	
-	private void disposePaintBuffer() {
+	private synchronized void disposePaintBuffer() {
 		if (bufferGraphics!=null) { 
 			bufferGraphics.dispose();
 			bufferGraphics = null;
@@ -106,12 +106,21 @@ public class GamePanel extends Component implements KeyListener {
 		disposePaintBuffer();
 	}
 
-	public void paint(Graphics realGraphics) {
+	public void paint(Graphics gr) {
+		//painting the buffered image
+		gr.drawImage(bufferImage, 0, 0, null);
+	}
+	public void update(Graphics gr) {
+		paint(gr);
+	}
+	
+	//paint game field to the buffer image
+	protected synchronized void paintBuffer() {
 		//Clear the field
 		bufferGraphics.setColor(BACKGROUND_COLOR);
 		bufferGraphics.fillRect(0, 0, getWidth(), getHeight());
 		bufferGraphics.setColor(TEXT_COLOR);
-		bufferGraphics.drawRect(0, 0, fieldWidth*CELL_SIZE, fieldHeight*CELL_SIZE);
+		bufferGraphics.drawRect(0, 0, fieldWidth *CELL_SIZE-1, fieldHeight *CELL_SIZE-1);
 		
 		// draw the apple and new body
 		drawApple(bufferGraphics, apple, APPLE_COLOR, CELL_SIZE);
@@ -123,13 +132,10 @@ public class GamePanel extends Component implements KeyListener {
 		if (paused) {
 			drawPausedSplash(bufferGraphics);
 		}
-		
-		//painting the buffered image
-		realGraphics.drawImage(bufferImage, 0, 0, null);
 	}
-
+	
 	//paints current score
-	private void drawScore(Graphics gr) {
+	protected void drawScore(Graphics gr) {
 		FontMetrics metrics = gr.getFontMetrics(subtitleFont);
 		
 		gr.setColor(TEXT_COLOR);
@@ -160,18 +166,24 @@ public class GamePanel extends Component implements KeyListener {
 		gr.setColor(color);
 		gr.fillOval(pt.x * cellSize, pt.y * cellSize, cellSize, cellSize);
 	}
-
+	
 	public void keyPressed(KeyEvent key) {
-		game = true;
-		paused = false;
 		if (isRightKey(key)) {
 			snake.setDirection(Snake.Direction.RIGHT);
+			game = true;
+			paused = false;
 		} else if (isLeftKey(key)) {
 			snake.setDirection(Snake.Direction.LEFT);
+			game = true;
+			paused = false;
 		} else if (isUpKey(key)) {
 			snake.setDirection(Snake.Direction.UP);
+			game = true;
+			paused = false;
 		} else if (isDownKey(key)) {
 			snake.setDirection(Snake.Direction.DOWN);
+			game = true;
+			paused = false;
 		} else if (isPauseKey(key)) {
 			paused = true;
 		}
@@ -203,7 +215,7 @@ public class GamePanel extends Component implements KeyListener {
 	public void keyTyped(KeyEvent arg0) {
 		//nothing to do
 	}
-	
+
 	//periodically updates the state machine
 	private class UpdaterThread extends Thread {
 		public void run() {
@@ -228,7 +240,8 @@ public class GamePanel extends Component implements KeyListener {
 					if (!paused)
 						snake.move();	//moving the snake forward
 				}
-	
+				
+				paintBuffer();
 				repaint();
 				
 				try {
@@ -237,5 +250,6 @@ public class GamePanel extends Component implements KeyListener {
 				}
 			}
 		}
+
 	}
 }
