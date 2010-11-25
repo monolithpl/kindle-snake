@@ -88,7 +88,7 @@ public class Snake {
 	public boolean isWithinBounds(int x, int y, int width, int height) {
 		int headX = getHead().x;
 		int headY = getHead().y;
-		return (headX >= 0) && (headX < width) && (headY >= 0) && (headY < height);
+		return (headX >= x) && (headX < width) && (headY >= y) && (headY < height);
 	}
 	
 	public class Direction {
