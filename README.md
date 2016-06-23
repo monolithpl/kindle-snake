@@ -3,7 +3,7 @@ This project is a classic Snake game ported to Kindle 3. Original source from [g
 
 ###Installation
 - you'll need a jailbroken Kindle
-- copy 111developer.keystore```  to ```/var/local/java/keystore/```
+- copy ```developer.keystore```  to ```/var/local/java/keystore/```
 - copy ```kSnake_1.0.azw2``` file to your Kindle's ```documents``` folder.
 - reboot the device (```Menu - Settings - Menu - Restart```)
 - enjoy :)
